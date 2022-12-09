@@ -59,6 +59,12 @@ class FontPicker extends StatefulWidget {
   /// Set whether to show font details (category, number of variants) next to each font tile in the list.
   final bool showFontInfo;
 
+  final bool showSearchField;
+  final bool showLanguageDropdown;
+  final bool showFontCategories;
+  final bool showFontPreview;
+  final bool showVariants;
+
   /// Set to true if the font picker will be used in an [AlertDialog] (check examples for usage).
   final bool showInDialog;
 
@@ -79,6 +85,11 @@ class FontPicker extends StatefulWidget {
     super.key,
     this.googleFonts = googleFontsList,
     this.showFontInfo = true,
+    this.showSearchField = true,
+    this.showLanguageDropdown = true,
+    this.showFontCategories = true,
+    this.showFontPreview = true,
+    this.showVariants = true,
     this.showInDialog = false,
     this.recentsCount = 3,
     required this.onFontChanged,
@@ -104,6 +115,11 @@ class _FontPickerState extends State<FontPicker> {
             onFontChanged: widget.onFontChanged,
             googleFonts: widget.googleFonts,
             showFontInfo: widget.showFontInfo,
+            showSearchField: widget.showSearchField,
+            showLanguageDropdown: widget.showLanguageDropdown,
+            showFontCategories: widget.showFontCategories,
+            showFontPreview: widget.showFontPreview,
+            showVariants: widget.showVariants,
             showInDialog: widget.showInDialog,
             recentsCount: widget.recentsCount,
             initialFontFamily: widget.initialFontFamily ?? 'Roboto',
