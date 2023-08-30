@@ -18,6 +18,11 @@ class FontPickerUI extends StatefulWidget {
   final ValueChanged<PickerFont> onFontChanged;
   String initialFontFamily;
   final bool showFontInfo;
+  final bool showSearchField;
+  final bool showLanguageDropdown;
+  final bool showFontCategories;
+  final bool showFontPreview;
+  final bool showVariants;
   final bool showInDialog;
   final int recentsCount;
   final String lang;
@@ -27,6 +32,11 @@ class FontPickerUI extends StatefulWidget {
     super.key,
     this.googleFonts = googleFontsList,
     this.showFontInfo = true,
+    this.showSearchField = true,
+    this.showLanguageDropdown = true,
+    this.showFontCategories = true,
+    this.showFontPreview = true,
+    this.showVariants = true,
     this.showInDialog = false,
     this.recentsCount = 3,
     required this.onFontChanged,
@@ -79,6 +89,21 @@ class _FontPickerUIState extends State<FontPickerUI> {
     });
   }
 
+  void _onSelectPressed(PickerFont f) {
+    _selectedFontFamily = f.fontFamily;
+    _selectedFontWeight = FontWeight.w400;
+    _selectedFontStyle = FontStyle.normal;
+    addToRecents(_selectedFontFamily!);
+    changeFont(
+      PickerFont(
+        fontFamily: _selectedFontFamily!,
+        fontWeight: _selectedFontWeight,
+        fontStyle: _selectedFontStyle,
+      ),
+    );
+    Navigator.of(context).pop();
+  }
+
   void changeFont(PickerFont selectedFont) {
     setState(() {
       widget.onFontChanged(selectedFont);
@@ -98,38 +123,44 @@ class _FontPickerUIState extends State<FontPickerUI> {
                 ? ListView(
                     shrinkWrap: true,
                     children: [
-                      FontSearch(
-                        onSearchTextChanged: onSearchTextChanged,
-                      ),
-                      FontLanguage(
-                        onFontLanguageSelected: onFontLanguageSelected,
-                        selectedFontLanguage: _selectedFontLanguage,
-                      ),
+                      if (widget.showSearchField)
+                        FontSearch(
+                          onSearchTextChanged: onSearchTextChanged,
+                        ),
+                      if (widget.showLanguageDropdown)
+                        FontLanguage(
+                          onFontLanguageSelected: onFontLanguageSelected,
+                          selectedFontLanguage: _selectedFontLanguage,
+                        ),
                       const SizedBox(height: 12.0),
                     ],
                   )
                 : Row(
                     children: [
-                      Expanded(
-                        child: FontSearch(
-                          onSearchTextChanged: onSearchTextChanged,
+                      if (widget.showSearchField)
+                        Expanded(
+                          child: FontSearch(
+                            onSearchTextChanged: onSearchTextChanged,
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: FontLanguage(
-                          onFontLanguageSelected: onFontLanguageSelected,
-                          selectedFontLanguage: _selectedFontLanguage,
+                      if (widget.showLanguageDropdown)
+                        Expanded(
+                          child: FontLanguage(
+                            onFontLanguageSelected: onFontLanguageSelected,
+                            selectedFontLanguage: _selectedFontLanguage,
+                          ),
                         ),
-                      ),
                     ],
                   ),
           ),
-          FontCategories(onFontCategoriesUpdated: onFontCategoriesUpdated),
-          FontPreview(
-            fontFamily: _selectedFontFamily ?? 'Roboto',
-            fontWeight: _selectedFontWeight,
-            fontStyle: _selectedFontStyle,
-          ),
+          if (widget.showFontCategories)
+            FontCategories(onFontCategoriesUpdated: onFontCategoriesUpdated),
+          if (widget.showFontPreview)
+            FontPreview(
+              fontFamily: _selectedFontFamily ?? 'Roboto',
+              fontWeight: _selectedFontWeight,
+              fontStyle: _selectedFontStyle,
+            ),
           Expanded(
             child: ListView.builder(
               itemCount: _shownFonts.length,
@@ -150,15 +181,19 @@ class _FontPickerUIState extends State<FontPickerUI> {
                   selected: isBeingSelected,
                   selectedTileColor: Theme.of(context).focusColor,
                   onTap: () {
-                    setState(() {
-                      if (!isBeingSelected) {
-                        _selectedFontFamily = f.fontFamily;
-                        _selectedFontWeight = FontWeight.w400;
-                        _selectedFontStyle = FontStyle.normal;
-                      } else {
-                        _selectedFontFamily = null;
-                      }
-                    });
+                    if (widget.showVariants) {
+                      setState(() {
+                        if (!isBeingSelected) {
+                          _selectedFontFamily = f.fontFamily;
+                          _selectedFontWeight = FontWeight.w400;
+                          _selectedFontStyle = FontStyle.normal;
+                        } else {
+                          _selectedFontFamily = null;
+                        }
+                      });
+                    } else {
+                      _onSelectPressed(f);
+                    }
                   },
                   title: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -256,22 +291,14 @@ class _FontPickerUIState extends State<FontPickerUI> {
                         )
                       : null,
                   trailing: isBeingSelected
-                      ? TextButton(
-                          child: Text(
-                            translations.d["select"]!,
-                          ),
-                          onPressed: () {
-                            addToRecents(_selectedFontFamily!);
-                            changeFont(
-                              PickerFont(
-                                fontFamily: _selectedFontFamily!,
-                                fontWeight: _selectedFontWeight,
-                                fontStyle: _selectedFontStyle,
+                      ? widget.showVariants
+                          ? TextButton(
+                              child: Text(
+                                translations.d["select"]!,
                               ),
-                            );
-                            Navigator.of(context).pop();
-                          },
-                        )
+                              onPressed: () => _onSelectPressed(f),
+                            )
+                          : null
                       : _recentFonts.contains(f)
                           ? const Icon(
                               Icons.history,
