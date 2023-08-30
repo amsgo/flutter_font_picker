@@ -121,7 +121,6 @@ class _FontPickerState extends State<FontPicker> {
             showLanguageDropdown: widget.showLanguageDropdown,
             showFontCategories: widget.showFontCategories,
             showFontPreview: widget.showFontPreview,
-            showVariants: widget.showVariants,
             showInDialog: widget.showInDialog,
             recentsCount: widget.recentsCount,
             initialFontFamily: widget.initialFontFamily ?? 'Roboto',

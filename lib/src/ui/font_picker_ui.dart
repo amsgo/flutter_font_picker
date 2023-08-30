@@ -22,7 +22,6 @@ class FontPickerUI extends StatefulWidget {
   final bool showLanguageDropdown;
   final bool showFontCategories;
   final bool showFontPreview;
-  final bool showVariants;
   final bool showInDialog;
   final int recentsCount;
   final String lang;
@@ -36,7 +35,6 @@ class FontPickerUI extends StatefulWidget {
     this.showLanguageDropdown = true,
     this.showFontCategories = true,
     this.showFontPreview = true,
-    this.showVariants = true,
     this.showInDialog = false,
     this.recentsCount = 3,
     required this.onFontChanged,
@@ -181,7 +179,7 @@ class _FontPickerUIState extends State<FontPickerUI> {
                   selected: isBeingSelected,
                   selectedTileColor: Theme.of(context).focusColor,
                   onTap: () {
-                    if (widget.showVariants) {
+                    if (widget.showFontVariants) {
                       setState(() {
                         if (!isBeingSelected) {
                           _selectedFontFamily = f.fontFamily;
@@ -291,7 +289,7 @@ class _FontPickerUIState extends State<FontPickerUI> {
                         )
                       : null,
                   trailing: isBeingSelected
-                      ? widget.showVariants
+                      ? widget.showFontVariants
                           ? TextButton(
                               child: Text(
                                 translations.d["select"]!,
