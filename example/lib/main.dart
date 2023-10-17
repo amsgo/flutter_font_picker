@@ -128,22 +128,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        content: SingleChildScrollView(
-                          child: SizedBox(
-                            width: double.maxFinite,
-                            child: FontPicker(
-                              showInDialog: true,
-                              initialFontFamily: 'Anton',
-                              onFontChanged: (font) {
-                                setState(() {
-                                  _selectedFont = font.fontFamily;
-                                  _selectedFontTextStyle = font.toTextStyle();
-                                });
-                                debugPrint(
-                                  "${font.fontFamily} with font weight ${font.fontWeight} and font style ${font.fontStyle}. FontSpec: ${font.toFontSpec()}",
-                                );
-                              },
-                              googleFonts: _myGoogleFonts,
+                        contentPadding: EdgeInsets.zero,
+                        content: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: SingleChildScrollView(
+                            child: SizedBox(
+                              width: double.maxFinite,
+                              child: FontPicker(
+                                showInDialog: true,
+                                initialFontFamily: 'Anton',
+                                onFontChanged: (font) {
+                                  setState(() {
+                                    _selectedFont = font.fontFamily;
+                                    _selectedFontTextStyle = font.toTextStyle();
+                                  });
+                                  debugPrint(
+                                    "${font.fontFamily} with font weight ${font.fontWeight} and font style ${font.fontStyle}. FontSpec: ${font.toFontSpec()}",
+                                  );
+                                },
+                                googleFonts: _myGoogleFonts,
+                              ),
                             ),
                           ),
                         ),
