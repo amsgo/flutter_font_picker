@@ -70,9 +70,6 @@ class FontPicker extends StatefulWidget {
   /// Set to true if the font picker will be used in an [AlertDialog] (check examples for usage).
   final bool showInDialog;
 
-  /// Fonts that the user selected before can be saved in [SharedPreferences] and shown at the start of the list. Sets how many you want saved as recents.
-  final int recentsCount;
-
   /// The language in which to show the UI. Defaults to English.
   ///
   /// If you need a translation in another language: take a look at the dictionaries variable in constants.dart, and send me the translations for your language.
@@ -93,7 +90,6 @@ class FontPicker extends StatefulWidget {
     this.showFontCategories = true,
     this.showFontPreview = true,
     this.showInDialog = false,
-    this.recentsCount = 3,
     required this.onFontChanged,
     this.initialFontFamily,
     this.lang = "en",
@@ -122,7 +118,6 @@ class _FontPickerState extends State<FontPicker> {
             showFontCategories: widget.showFontCategories,
             showFontPreview: widget.showFontPreview,
             showInDialog: widget.showInDialog,
-            recentsCount: widget.recentsCount,
             initialFontFamily: widget.initialFontFamily ?? 'Roboto',
             lang: widget.lang,
             showFontVariants: widget.showFontVariants,
@@ -134,7 +129,6 @@ class _FontPickerState extends State<FontPicker> {
               googleFonts: widget.googleFonts,
               showFontInfo: widget.showFontInfo,
               showInDialog: widget.showInDialog,
-              recentsCount: widget.recentsCount,
               initialFontFamily: widget.initialFontFamily ?? 'Roboto',
               lang: widget.lang,
               showFontVariants: widget.showFontVariants,

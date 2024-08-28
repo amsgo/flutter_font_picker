@@ -2,7 +2,6 @@ library flutter_font_picker;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/constants.dart';
 import '../constants/fontweights_map.dart';
@@ -23,7 +22,6 @@ class FontPickerUI extends StatefulWidget {
   final bool showFontCategories;
   final bool showFontPreview;
   final bool showInDialog;
-  final int recentsCount;
   final String lang;
   final bool showFontVariants;
 
@@ -36,7 +34,6 @@ class FontPickerUI extends StatefulWidget {
     this.showFontCategories = true,
     this.showFontPreview = true,
     this.showInDialog = false,
-    this.recentsCount = 3,
     required this.onFontChanged,
     required this.initialFontFamily,
     required this.lang,
@@ -50,7 +47,6 @@ class FontPickerUI extends StatefulWidget {
 class _FontPickerUIState extends State<FontPickerUI> {
   var _shownFonts = <PickerFont>[];
   var _allFonts = <PickerFont>[];
-  var _recentFonts = <PickerFont>[];
   String? _selectedFontFamily;
   FontWeight _selectedFontWeight = FontWeight.w400;
   FontStyle _selectedFontStyle = FontStyle.normal;
@@ -63,22 +59,14 @@ class _FontPickerUIState extends State<FontPickerUI> {
   }
 
   Future _prepareShownFonts() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var recents = prefs.getStringList(prefsRecentsKey) ?? [];
     final supportedFonts = GoogleFonts.asMap()
         .keys
         .where((e) => widget.googleFonts.contains(e))
         .toList();
     setState(() {
-      _recentFonts = recents.reversed
-          .map((fontFamily) =>
-              PickerFont(fontFamily: fontFamily, isRecent: true))
+      _allFonts = supportedFonts
+          .map((fontFamily) => PickerFont(fontFamily: fontFamily))
           .toList();
-      _allFonts = _recentFonts +
-          supportedFonts
-              .where((fontFamily) => !recents.contains(fontFamily))
-              .map((fontFamily) => PickerFont(fontFamily: fontFamily))
-              .toList();
       _shownFonts = List.from(_allFonts);
       if (!supportedFonts.contains(widget.initialFontFamily)) {
         widget.initialFontFamily = 'Roboto';
@@ -91,7 +79,6 @@ class _FontPickerUIState extends State<FontPickerUI> {
     _selectedFontFamily = f.fontFamily;
     _selectedFontWeight = FontWeight.w400;
     _selectedFontStyle = FontStyle.normal;
-    addToRecents(_selectedFontFamily!);
     changeFont(
       PickerFont(
         fontFamily: _selectedFontFamily!,
@@ -288,21 +275,6 @@ class _FontPickerUIState extends State<FontPickerUI> {
                           ),
                         )
                       : null,
-                  trailing: isBeingSelected
-                      ? widget.showFontVariants
-                          ? TextButton(
-                              child: Text(
-                                translations.d["select"]!,
-                              ),
-                              onPressed: () => _onSelectPressed(f),
-                            )
-                          : null
-                      : _recentFonts.contains(f)
-                          ? const Icon(
-                              Icons.history,
-                              size: 18.0,
-                            )
-                          : null,
                 );
               },
             ),
@@ -310,21 +282,6 @@ class _FontPickerUIState extends State<FontPickerUI> {
         ],
       ),
     );
-  }
-
-  Future<void> addToRecents(String fontFamily) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var recents = prefs.getStringList(prefsRecentsKey);
-    if (recents != null && !recents.contains(fontFamily)) {
-      if (recents.length == widget.recentsCount) {
-        recents = recents.sublist(1)..add(fontFamily);
-      } else {
-        recents.add(fontFamily);
-      }
-      prefs.setStringList(prefsRecentsKey, recents);
-    } else {
-      prefs.setStringList(prefsRecentsKey, [fontFamily]);
-    }
   }
 
   void onFontLanguageSelected(String? newValue) {
